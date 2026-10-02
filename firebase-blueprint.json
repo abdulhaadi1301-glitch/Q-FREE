@@ -1,0 +1,143 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "System accounts for Patients, Providers, and Admins",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string" },
+        "role": { "type": "string", "enum": ["PATIENT", "PROVIDER", "ADMIN"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "email", "role", "createdAt"]
+    },
+    "Provider": {
+      "title": "Provider",
+      "description": "Healthcare organizations and clinics operating queues",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "providerType": { "type": "string", "enum": ["CLINIC", "HOSPITAL", "PATHOLOGY", "DOCTOR"] },
+        "organizationName": { "type": "string" },
+        "doctorName": { "type": "string" },
+        "specialist": { "type": "string" },
+        "experience": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "address": { "type": "string" },
+        "latitude": { "type": "number" },
+        "longitude": { "type": "number" },
+        "openingTime": { "type": "string" },
+        "closingTime": { "type": "string" },
+        "tokenLimit": { "type": "number" },
+        "averageConsultationTime": { "type": "number" },
+        "status": { "type": "string", "enum": ["ACTIVE", "INACTIVE", "SUSPENDED"] },
+        "verificationStatus": { "type": "string", "enum": ["VERIFIED", "PENDING", "REJECTED"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "providerType", "organizationName", "doctorName", "phone", "status", "verificationStatus", "createdAt"]
+    },
+    "Queue": {
+      "title": "Queue",
+      "description": "Authoritative daily state machine queue for a provider",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "providerId": { "type": "string" },
+        "date": { "type": "string" },
+        "currentToken": { "type": "number" },
+        "nextToken": { "type": "number" },
+        "totalTokens": { "type": "number" },
+        "tokenLimit": { "type": "number" },
+        "status": { "type": "string", "enum": ["NOT_STARTED", "LIVE", "PAUSED", "DELAYED", "CLOSED"] },
+        "delayMinutes": { "type": "number" }
+      },
+      "required": ["id", "providerId", "date", "status", "tokenLimit"]
+    },
+    "Token": {
+      "title": "Token",
+      "description": "Atomic queue entry with patient consultation status",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "queueId": { "type": "string" },
+        "providerId": { "type": "string" },
+        "patientId": { "type": "string" },
+        "tokenNumber": { "type": "number" },
+        "patientName": { "type": "string" },
+        "patientPhone": { "type": "string" },
+        "gender": { "type": "string", "enum": ["MALE", "FEMALE", "OTHER"] },
+        "status": { "type": "string", "enum": ["RESERVED", "WAITING", "CALLED", "IN_PROGRESS", "COMPLETED", "CANCELLED", "NO_SHOW"] },
+        "bookedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "queueId", "providerId", "patientId", "tokenNumber", "status", "bookedAt"]
+    },
+    "ProviderApplication": {
+      "title": "ProviderApplication",
+      "description": "Application submitted by doctors/clinics for onboarding",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "applicantUserId": { "type": "string" },
+        "providerType": { "type": "string" },
+        "organizationName": { "type": "string" },
+        "doctorName": { "type": "string" },
+        "phone": { "type": "string" },
+        "status": { "type": "string", "enum": ["PENDING", "UNDER_REVIEW", "ADDITIONAL_INFO_REQUESTED", "APPROVED", "REJECTED"] }
+      },
+      "required": ["id", "applicantUserId", "organizationName", "phone", "status"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "In-app and SMS notifications sent to users",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "type": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "read": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "type", "title", "message", "read", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Collection of registered patient and provider user accounts"
+    },
+    "/providers/{providerId}": {
+      "schema": "Provider",
+      "description": "Verified healthcare provider clinics and hospitals"
+    },
+    "/queues/{queueId}": {
+      "schema": "Queue",
+      "description": "Daily queue state instances"
+    },
+    "/tokens/{tokenId}": {
+      "schema": "Token",
+      "description": "Tokens booked by patients for queues"
+    },
+    "/providerApplications/{appId}": {
+      "schema": "ProviderApplication",
+      "description": "Onboarding applications from healthcare providers"
+    },
+    "/notifications/{notifId}": {
+      "schema": "Notification",
+      "description": "User notifications"
+    },
+    "/auditLogs/{logId}": {
+      "schema": "User",
+      "description": "Security and compliance audit trail"
+    },
+    "/consents/{consentId}": {
+      "schema": "User",
+      "description": "DPDP Act patient consent records"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "QFree — Live Queue Tracking",
+  "description": "Real-time queue tracking and token management platform helping patients avoid physical waiting rooms at clinics, hospitals, and diagnostic centers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

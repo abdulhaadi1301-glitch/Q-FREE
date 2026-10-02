@@ -1,0 +1,11 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // QFree enforces Zero-Trust Server-Authoritative Architecture:
+    // All database mutations and queries must go through the hardened Express backend.
+    // Direct client access from web/mobile SDKs is completely disabled.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
